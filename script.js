@@ -6,15 +6,52 @@ document.addEventListener('DOMContentLoaded', () => {
     const secretMessage = document.querySelector('.secret-message');
     const emojiContainer = document.querySelector('.emoji-container');
     const rickRoll = document.getElementById('rickroll');
+    const rickRollMuted = document.getElementById('rickroll-muted');
+    const rickrollContainer = document.getElementById('rickroll-container');
+    const youtubeLink = document.getElementById('youtube-link');
+    const autoplayOverlay = document.getElementById('autoplay-overlay');
     
-    // Set the Rick Roll music URL
-    rickRoll.src = 'https://ia800206.us.archive.org/16/items/Rick_Astley_Never_Gonna_Give_You_Up/Rick_Astley_Never_Gonna_Give_You_Up.mp3';
+    // Track music state
+    let isMusicPlaying = false;
     
-    // Try to autoplay (browsers may block this, so we need a fallback)
-    rickRoll.play().catch(e => {
-        console.log('Autoplay prevented by browser:', e);
-        // We'll keep the button for user interaction
+    // Preload the audio
+    rickRoll.preload = 'auto';
+    rickRoll.volume = 1.0; // Full volume
+    rickRollMuted.volume = 1.0;
+    
+    // Click overlay to start audio
+    autoplayOverlay.addEventListener('click', function() {
+        startEverything();
+        autoplayOverlay.style.display = 'none';
     });
+    
+    // Function to start everything
+    function startEverything() {
+        console.log('Starting everything with user interaction...');
+        
+        // Try both audio elements
+        const playPromise1 = rickRoll.play();
+        const playPromise2 = rickRollMuted.play();
+        
+        // Unmute the muted one
+        rickRollMuted.muted = false;
+        
+        // Show the dancing Rick
+        rickrollContainer.style.display = 'block';
+        
+        // Update UI
+        musicToggle.textContent = 'PAUSE THE MUSIC!';
+        secretMessage.style.animationPlayState = 'running';
+        isMusicPlaying = true;
+        
+        // Shake everything
+        document.querySelectorAll('*').forEach(element => {
+            element.classList.add('animate__animated', 'animate__shakeX');
+            setTimeout(() => {
+                element.classList.remove('animate__animated', 'animate__shakeX');
+            }, 1000);
+        });
+    }
     
     // Funny poop facts for random display
     const poopFacts = [
@@ -60,18 +97,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000);
     });
     
-    // Update button text based on current play state
-    if (!rickRoll.paused) {
-        musicToggle.textContent = 'PAUSE THE MUSIC!';
-        secretMessage.style.animationPlayState = 'running';
-    }
-    
     // Music toggle button
     musicToggle.addEventListener('click', () => {
-        if (rickRoll.paused) {
-            rickRoll.play();
+        // Remove overlay if it's still there
+        autoplayOverlay.style.display = 'none';
+        
+        if (!isMusicPlaying) {
+            // Try to play both audio elements
+            rickRoll.play().catch(e => console.error('Error playing main audio:', e));
+            rickRollMuted.play().catch(e => console.error('Error playing backup audio:', e));
+            
+            // Make sure both are unmuted
+            rickRoll.muted = false;
+            rickRollMuted.muted = false;
+            
+            rickrollContainer.style.display = 'block';
             musicToggle.textContent = 'PAUSE THE MUSIC!';
             secretMessage.style.animationPlayState = 'running';
+            isMusicPlaying = true;
             
             // Shake everything when music starts
             document.querySelectorAll('*').forEach(element => {
@@ -81,9 +124,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, 1000);
             });
         } else {
+            // Pause both audio elements
             rickRoll.pause();
+            rickRollMuted.pause();
             musicToggle.textContent = 'PLAY THE MUSIC!';
+            rickrollContainer.style.display = 'none';
+            isMusicPlaying = false;
         }
+    });
+    
+    // Global click handler for first interaction
+    document.addEventListener('click', function() {
+        // Remove overlay
+        autoplayOverlay.style.display = 'none';
+        
+        // Start everything
+        startEverything();
+    }, { once: true });
+    
+    // Make sure the YouTube link is visible and clickable
+    youtubeLink.addEventListener('click', (e) => {
+        // We'll let this event propagate normally to open the link
+        console.log('YouTube link clicked');
     });
     
     // Poop multiplier button

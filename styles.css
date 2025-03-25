@@ -204,3 +204,28 @@ p {
     animation: unicorn-dance 3s infinite;
     z-index: 8;
 }
+
+/* Rick Roll GIF container styling */
+#rickroll-container {
+    border: 5px solid rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.7);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    padding-bottom: 10px;
+    width: 180px; /* Smaller width */
+    max-width: 180px;
+}
+
+#rickroll-container:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(255, 0, 255, 1);
+}
+
+#rickroll-gif {
+    width: 100%;
+    border-bottom: 3px solid rgba(255, 255, 255, 0.5);
+    margin-bottom: 10px;
+    max-width: 100%;
+}
