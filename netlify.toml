@@ -5,3 +5,12 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Custom domain configuration
+[context.production]
+  environment = { NETLIFY_SITE_NAME = "jmefitlanding" }
+
+[[headers]]
+  for = "/*"
+    [headers.values]
+    Access-Control-Allow-Origin = "*"
